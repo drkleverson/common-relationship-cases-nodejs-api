@@ -62,12 +62,19 @@ exports.postTeam = (req, res) => {
 };
 
 exports.putTeamById = (req, res) => {
-  let { params } = req;
+  const { params, body } = req;
 
   let team = {
-    NOME: { value: req.body.name, type: TYPES.VarChar },
-    DM_STATUS: { value: 1, type: TYPES.Int },
+    NOME: { value: body.name, type: TYPES.VarChar },
+    CODIGO: { value: body.code, type: TYPES.VarChar },
   };
+
+  if (body.parentId) {
+    team = {
+      ...team,
+      ID_PARENT: { value: body.parentId, type: TYPES.Int },
+    };
+  }
 
   db.update(TABLES.TEAMS, params.id, team, "INSERTED.*")
     .then((result) => {

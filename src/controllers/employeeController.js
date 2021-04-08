@@ -113,10 +113,6 @@ exports.putEmployeeTeamsById = (req, res) => {
   }
   response()
     .then((result) => {
-      if (!result) {
-        return res.sendStatus(404);
-      }
-
       res.status(200).send(result);
     })
     .catch((e) => {
