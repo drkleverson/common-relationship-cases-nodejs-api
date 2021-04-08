@@ -50,7 +50,7 @@ exports.getEmployeeTeamsById = (req, res) => {
 
     let sqlEmployeeTeams = `SELECT c.ID, c.ID_PARENT, c.NOME FROM ${TABLES.EMPLOYEES} a INNER JOIN ${TABLES.EMPLOYEES_X_TEAMS} b ON a.ID = b.FK_X1101 INNER JOIN ${TABLES.TEAMS} c ON b.FK_X1105 = c.ID WHERE a.id = ${params.id}`;
     let employeeTeams = await db.rawQuery(sqlEmployeeTeams);
-    return { employee: employee, teams: employeeTeams };
+    return { employee: employee[0], teams: employeeTeams };
   }
 
   response()
@@ -107,7 +107,7 @@ exports.putEmployeeTeamsById = (req, res) => {
 
     for (id of body.ids) {
       let updateRelationshipSql = `INSERT ${TABLES.EMPLOYEES_X_TEAMS} (${FK.EMPLOYEES_FK},${FK.TEAMS_FK}) VALUES (${params.id},${id})`;
-      let updateRelationshipResponse = await db.rawQuery(updateRelationshipSql);
+      await db.rawQuery(updateRelationshipSql);
     }
     return;
   }

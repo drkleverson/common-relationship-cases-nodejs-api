@@ -2,8 +2,6 @@ var express = require("express");
 
 const app = express();
 
-const api = express.Router();
-
 const robotsNoIndex = require("./middleware/robotsNoIndex");
 
 const apiRoute = require("./routes/api/api");

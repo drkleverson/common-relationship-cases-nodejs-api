@@ -36,19 +36,19 @@ module.exports = {
 
       request.on("row", function (columns) {
         var rowObject = {};
+
         columns.forEach(function (column) {
           rowObject[column.metadata.colName] = column.value;
         });
         jsonArray.push(rowObject);
       });
 
-      request.on("doneProc", function (rowCount, more, returnStatus, rows) {
+      request.on("doneInProc", function (rowCount, more, returnStatus, rows) {
         return resolve(jsonArray);
       });
 
       connection.on("connect", function (err) {
         if (err) {
-          console.log(err);
           process.exit(1);
         }
         connection.execSql(request);
