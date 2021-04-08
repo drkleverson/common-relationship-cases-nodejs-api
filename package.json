@@ -1,0 +1,17 @@
+{
+  "name": "common-relationship-cases-nodejs-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {},
+  "scripts": {
+    "dev": "npm run dev",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv-safe": "^8.2.0",
+    "express": "^4.17.1",
+    "tedious": "^11.0.7"
+  }
+}
