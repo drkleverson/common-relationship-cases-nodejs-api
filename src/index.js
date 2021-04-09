@@ -8,6 +8,7 @@ const apiRoute = require("./routes/api/api");
 
 app.use(express.json());
 app.use(robotsNoIndex);
+app.disable("x-powered-by");
 
 app.use("/api", apiRoute);
 

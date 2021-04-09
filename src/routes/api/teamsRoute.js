@@ -13,6 +13,9 @@ teamsRouter.get("/:id", teamsController.getTeamById);
 //busca os funcionarios de uma equipe
 teamsRouter.get("/:id/employees", teamsController.getTeamEmployeesById);
 
+//busca as equipes filhas de uma equipe
+teamsRouter.get("/:id/childs", teamsController.getTeamChildsById);
+
 //cadastra nova equipe, equipe poderá ter equipe pai
 teamsRouter.post("/", teamsController.postTeam);
 
