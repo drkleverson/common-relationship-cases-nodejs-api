@@ -10,4 +10,4 @@ api.use("/teams", teamsRoute);
 api.use("/employees", employeesRoute);
 api.use("/providers", providersRoute);
 
-module.exports = api;
+export default api;

@@ -1,12 +1,10 @@
-var express = require("express");
+import express, { json } from "express";
+import robotsNoIndex from "./middleware/robotsNoIndex";
+import apiRoute from "./routes/api/api";
 
 const app = express();
 
-const robotsNoIndex = require("./middleware/robotsNoIndex");
-
-const apiRoute = require("./routes/api/api");
-
-app.use(express.json());
+app.use(json());
 app.use(robotsNoIndex);
 app.disable("x-powered-by");
 

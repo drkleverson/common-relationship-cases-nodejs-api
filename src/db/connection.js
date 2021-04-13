@@ -1,4 +1,4 @@
-const { TYPES, Connection, Request } = require("tedious");
+import { TYPES, Connection, Request } from "tedious";
 require("dotenv").config();
 
 var config = {
@@ -19,163 +19,161 @@ var config = {
     database: process.env.DB_DATABASE,
   },
 };
+
 // If no error, then good to proceed.
-module.exports = {
-  rawQuery: async (sql) => {
-    return await new Promise((resolve, reject) => {
-      var jsonArray = [];
-      let connection = new Connection(config);
-      connection.connect();
+export async function rawQuery(sql) {
+  return await new Promise((resolve, reject) => {
+    var jsonArray = [];
+    let connection = new Connection(config);
+    connection.connect();
 
-      request = new Request(sql, function (err, rowCount, rows) {
-        if (err) {
-          return reject(err);
-        }
-        connection.close();
-      });
-
-      request.on("row", function (columns) {
-        var rowObject = {};
-
-        columns.forEach(function (column) {
-          rowObject[column.metadata.colName] = column.value;
-        });
-        jsonArray.push(rowObject);
-      });
-
-      request.on("doneInProc", function (rowCount, more, returnStatus, rows) {
-        return resolve(jsonArray);
-      });
-
-      connection.on("connect", function (err) {
-        if (err) {
-          process.exit(1);
-        }
-        connection.execSql(request);
-      });
-    });
-  },
-  insert: async (table, values, output = null) => {
-    return await new Promise((resolve, reject) => {
-      let keys = Object.keys(values);
-      var rowObject = {};
-
-      let sql = `INSERT ${table} (${keys.join(",")}) ${
-        output ? `OUTPUT ${output}` : ``
-      } VALUES (${keys.map((v) => `@${v}`).join(",")});`;
-
-      let connection = new Connection(config);
-      connection.connect();
-
-      request = new Request(sql, function (err) {
-        if (err) {
-          return reject(err);
-        }
-        connection.close();
-      });
-
-      for (key in values) {
-        request.addParameter(key, values[key].type, values[key].value);
+    request = new Request(sql, function (err, rowCount, rows) {
+      if (err) {
+        return reject(err);
       }
-
-      request.on("row", function (columns) {
-        columns.forEach(function (column) {
-          rowObject[column.metadata.colName] = column.value;
-        });
-      });
-
-      request.on("doneProc", function (rowCount, more, returnStatus, rows) {
-        return resolve(rowObject);
-      });
-
-      connection.on("connect", function (err) {
-        if (err) {
-          console.log(err);
-          process.exit(1);
-        }
-        connection.execSql(request);
-      });
+      connection.close();
     });
-  },
-  update: async (table, id, values, output = false) => {
-    return await new Promise((resolve, reject) => {
-      let keys = Object.keys(values);
+
+    request.on("row", function (columns) {
       var rowObject = {};
 
-      let sql = `UPDATE ${table} SET ${keys.map((v) => `${v}=@${v}`)} ${
-        output ? `OUTPUT ${output}` : ``
-      } WHERE id=@id;`;
-
-      let connection = new Connection(config);
-      connection.connect();
-
-      request = new Request(sql, function (err) {
-        if (err) {
-          return reject(err);
-        }
-        connection.close();
+      columns.forEach(function (column) {
+        rowObject[column.metadata.colName] = column.value;
       });
+      jsonArray.push(rowObject);
+    });
 
-      request.addParameter("id", TYPES.Int, parseInt(id));
+    request.on("doneInProc", function (rowCount, more, returnStatus, rows) {
+      return resolve(jsonArray);
+    });
 
-      for (key in values) {
-        request.addParameter(key, values[key].type, values[key].value);
+    connection.on("connect", function (err) {
+      if (err) {
+        process.exit(1);
       }
+      connection.execSql(request);
+    });
+  });
+}
 
-      request.on("row", function (columns) {
-        columns.forEach(function (column) {
-          rowObject[column.metadata.colName] = column.value;
-        });
-      });
+export function insert(table, values, output = null) {
+  return new Promise((resolve, reject) => {
+    let keys = Object.keys(values);
+    var rowObject = {};
 
-      request.on("doneProc", function (rowCount, more, returnStatus, rows) {
-        return resolve(rowObject);
-      });
+    let sql = `INSERT ${table} (${keys.join(",")}) ${output ? `OUTPUT ${output}` : ``} VALUES (${keys.map((v) => `@${v}`).join(",")});`;
 
-      connection.on("connect", function (err) {
-        if (err) {
-          console.log(err);
-          process.exit(1);
-        }
-        connection.execSql(request);
+    let connection = new Connection(config);
+    connection.connect();
+
+    request = new Request(sql, function (err) {
+      if (err) {
+        return reject(err);
+      }
+      connection.close();
+    });
+
+    for (key in values) {
+      request.addParameter(key, values[key].type, values[key].value);
+    }
+
+    request.on("row", function (columns) {
+      columns.forEach(function (column) {
+        rowObject[column.metadata.colName] = column.value;
       });
     });
-  },
-  delete: async (table, id) => {
-    return await new Promise((resolve, reject) => {
-      var rowObject = {};
 
-      let sql = `DELETE FROM ${table} WHERE id=@id`;
+    request.on("doneProc", function (rowCount, more, returnStatus, rows) {
+      return resolve(rowObject);
+    });
 
-      let connection = new Connection(config);
-      connection.connect();
+    connection.on("connect", function (err) {
+      if (err) {
+        console.log(err);
+        process.exit(1);
+      }
+      connection.execSql(request);
+    });
+  });
+}
 
-      request = new Request(sql, function (err) {
-        if (err) {
-          return reject(err);
-        }
-        connection.close();
-      });
+export function update(table, id, values, output = false) {
+  return new Promise((resolve, reject) => {
+    let keys = Object.keys(values);
+    var rowObject = {};
 
-      request.addParameter("id", TYPES.Int, parseInt(id));
+    let sql = `UPDATE ${table} SET ${keys.map((v) => `${v}=@${v}`)} ${output ? `OUTPUT ${output}` : ``} WHERE id=@id;`;
 
-      request.on("row", function (columns) {
-        columns.forEach(function (column) {
-          rowObject[column.metadata.colName] = column.value;
-        });
-      });
+    let connection = new Connection(config);
+    connection.connect();
 
-      request.on("doneInProc", function (rowCount, more, rows) {
-        return resolve(rowCount);
-      });
+    request = new Request(sql, function (err) {
+      if (err) {
+        return reject(err);
+      }
+      connection.close();
+    });
 
-      connection.on("connect", function (err) {
-        if (err) {
-          console.log(err);
-          process.exit(1);
-        }
-        connection.execSql(request);
+    request.addParameter("id", TYPES.Int, parseInt(id));
+
+    for (key in values) {
+      request.addParameter(key, values[key].type, values[key].value);
+    }
+
+    request.on("row", function (columns) {
+      columns.forEach(function (column) {
+        rowObject[column.metadata.colName] = column.value;
       });
     });
-  },
-};
+
+    request.on("doneProc", function (rowCount, more, returnStatus, rows) {
+      return resolve(rowObject);
+    });
+
+    connection.on("connect", function (err) {
+      if (err) {
+        console.log(err);
+        process.exit(1);
+      }
+      connection.execSql(request);
+    });
+  });
+}
+
+export function remove(table, id) {
+  return new Promise((resolve, reject) => {
+    var rowObject = {};
+
+    let sql = `DELETE FROM ${table} WHERE id=@id`;
+
+    let connection = new Connection(config);
+    connection.connect();
+
+    request = new Request(sql, function (err) {
+      if (err) {
+        return reject(err);
+      }
+      connection.close();
+    });
+
+    request.addParameter("id", TYPES.Int, parseInt(id));
+
+    request.on("row", function (columns) {
+      columns.forEach(function (column) {
+        rowObject[column.metadata.colName] = column.value;
+      });
+    });
+
+    request.on("doneInProc", function (rowCount, more, rows) {
+      return resolve(rowCount);
+    });
+
+    connection.on("connect", function (err) {
+      if (err) {
+        console.log(err);
+        process.exit(1);
+      }
+      connection.execSql(request);
+    });
+  });
+}
