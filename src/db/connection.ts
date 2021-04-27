@@ -11,7 +11,7 @@ export const config = {
     },
   },
   options: {
-    port: process.env.DB_PORT,
+    port: Number(process.env.DB_PORT),
     trustServerCertificate: true,
     rowCollectionOnDone: true,
     validateBulkLoadParameters: false,
@@ -23,7 +23,7 @@ export const config = {
 // If no error, then good to proceed.
 export async function rawQuery(sql:string) {
   return await new Promise((resolve, reject) => {
-    var jsonArray = [];
+    const jsonArray = [];
     let connection = new Connection(config);
     connection.connect();
 
@@ -35,7 +35,7 @@ export async function rawQuery(sql:string) {
     });
 
     request.on("row", function (columns) {
-      var rowObject = {};
+      let rowObject = {};
 
       columns.forEach(function (column) {
         rowObject[column.metadata.colName] = column.value;
@@ -43,7 +43,7 @@ export async function rawQuery(sql:string) {
       jsonArray.push(rowObject);
     });
 
-    request.on("doneInProc", function (rowCount, more, returnStatus, rows) {
+    request.on("doneProc", function (rowCount, more, returnStatus, rows) {
       return resolve(jsonArray);
     });
 
@@ -56,7 +56,7 @@ export async function rawQuery(sql:string) {
   });
 }
 
-export function insert(table, values, output = null) {
+export function insert(table:String, values:any, output = null) {
   return new Promise((resolve, reject) => {
     let keys = Object.keys(values);
     var rowObject = {};
