@@ -130,6 +130,13 @@
     "@types/mime" "^1"
     "@types/node" "*"
 
+"@types/tedious@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@types/tedious/-/tedious-4.0.3.tgz#633a221309661df741eccc552e3a15b3204171aa"
+  integrity sha512-JMGNbZ7BOBSG/Tsus41SMdxqHgWpYhy0ZYGdC5vHGR75grOB17Zm+EZ7JaA32pS4Wtnt4wUPO30EqlmMI78sCA==
+  dependencies:
+    "@types/node" "*"
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"

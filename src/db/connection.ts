@@ -1,7 +1,7 @@
 import { TYPES, Connection, Request } from "tedious";
 require("dotenv").config();
 
-var config = {
+export const config = {
   server: process.env.DB_HOST,
   authentication: {
     type: "default",
@@ -11,7 +11,7 @@ var config = {
     },
   },
   options: {
-    port: parseInt(process.env.DB_PORT),
+    port: process.env.DB_PORT,
     trustServerCertificate: true,
     rowCollectionOnDone: true,
     validateBulkLoadParameters: false,
@@ -21,13 +21,13 @@ var config = {
 };
 
 // If no error, then good to proceed.
-export async function rawQuery(sql) {
+export async function rawQuery(sql:string) {
   return await new Promise((resolve, reject) => {
     var jsonArray = [];
     let connection = new Connection(config);
     connection.connect();
 
-    request = new Request(sql, function (err, rowCount, rows) {
+    const request = new Request(sql, function (err, rowCount, rows) {
       if (err) {
         return reject(err);
       }
@@ -66,14 +66,14 @@ export function insert(table, values, output = null) {
     let connection = new Connection(config);
     connection.connect();
 
-    request = new Request(sql, function (err) {
+    const request = new Request(sql, function (err) {
       if (err) {
         return reject(err);
       }
       connection.close();
     });
 
-    for (key in values) {
+    for (let key in values) {
       request.addParameter(key, values[key].type, values[key].value);
     }
 
@@ -97,7 +97,7 @@ export function insert(table, values, output = null) {
   });
 }
 
-export function update(table, id, values, output = false) {
+export function update(table:String, id:Number, values:any, output = false) {
   return new Promise((resolve, reject) => {
     let keys = Object.keys(values);
     var rowObject = {};
@@ -107,16 +107,16 @@ export function update(table, id, values, output = false) {
     let connection = new Connection(config);
     connection.connect();
 
-    request = new Request(sql, function (err) {
+    const request = new Request(sql, function (err) {
       if (err) {
         return reject(err);
       }
       connection.close();
     });
 
-    request.addParameter("id", TYPES.Int, parseInt(id));
+    request.addParameter("id", TYPES.Int, id);
 
-    for (key in values) {
+    for (let key in values) {
       request.addParameter(key, values[key].type, values[key].value);
     }
 
@@ -140,7 +140,7 @@ export function update(table, id, values, output = false) {
   });
 }
 
-export function remove(table, id) {
+export function remove(table: String, id: Number) {
   return new Promise((resolve, reject) => {
     var rowObject = {};
 
@@ -149,14 +149,14 @@ export function remove(table, id) {
     let connection = new Connection(config);
     connection.connect();
 
-    request = new Request(sql, function (err) {
+    const request = new Request(sql, function (err) {
       if (err) {
         return reject(err);
       }
       connection.close();
     });
 
-    request.addParameter("id", TYPES.Int, parseInt(id));
+    request.addParameter("id", TYPES.Int, id);
 
     request.on("row", function (columns) {
       columns.forEach(function (column) {
