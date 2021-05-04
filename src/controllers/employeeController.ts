@@ -2,12 +2,12 @@ import * as employeeRepository from "../repository/employeeRepository";
 import { Request, Response, NextFunction } from "express";
 
 //GET
-exports.getEmployees = async (req: Request, res: Response) => {
+export const getEmployees = async (req: Request, res: Response) => {
   const result = await employeeRepository.getEmployees();
   res.send(result);
-};
+}
 
-exports.getEmployeeById = async (req: Request, res: Response) => {
+export const getEmployeeById = async (req: Request, res: Response) => {
   const { params } = req;
 
   const result = await employeeRepository.getEmployeeById(Number(params.id));
@@ -15,9 +15,9 @@ exports.getEmployeeById = async (req: Request, res: Response) => {
     return res.sendStatus(404);
   }
   return res.status(200).send(result);
-};
+}
 
-exports.getEmployeeTeamsById = async (req: Request, res: Response) => {
+export const getEmployeeTeamsById = async (req: Request, res: Response) => {
   const { params } = req;
 
   const result = await employeeRepository.getEmployeeTeamsById(
@@ -27,10 +27,10 @@ exports.getEmployeeTeamsById = async (req: Request, res: Response) => {
     return res.sendStatus(404);
   }
   res.status(200).send(result);
-};
+}
 
 //POST
-exports.postEmployee = async (req: Request, res: Response) => {
+export const postEmployee = async (req: Request, res: Response) => {
   const { body } = req;
 
   const result = await employeeRepository.addEmployee(body);
@@ -38,7 +38,7 @@ exports.postEmployee = async (req: Request, res: Response) => {
 };
 
 //PUT
-exports.putEmployeeById = async (req: Request, res: Response) => {
+export const putEmployeeById = async (req: Request, res: Response) => {
   const { body, params } = req;
 
   const result = await employeeRepository.updateEmployee(
@@ -48,7 +48,7 @@ exports.putEmployeeById = async (req: Request, res: Response) => {
   res.status(201).send(result);
 };
 
-exports.putEmployeeTeamsById = async (req: Request, res: Response) => {
+export const putEmployeeTeamsById = async (req: Request, res: Response) => {
   const { params, body } = req;
 
   const result = await employeeRepository.putEmployeeTeamsById(
@@ -59,7 +59,7 @@ exports.putEmployeeTeamsById = async (req: Request, res: Response) => {
 };
 
 //DELETE
-exports.deleteEmployeeById = async (req: Request, res: Response) => {
+export const deleteEmployeeById = async (req: Request, res: Response) => {
   const { params } = req;
 
   const result = await employeeRepository.deleteEmployeeById(Number(params.id));

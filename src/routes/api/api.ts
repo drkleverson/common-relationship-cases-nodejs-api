@@ -2,7 +2,7 @@ var express = require("express");
 
 const api = express.Router();
 
-const employeesRoute = require("./employeesRoute");
+import employeesRoute from "./employeesRoute";
 
 api.use("/employees", employeesRoute);
 
