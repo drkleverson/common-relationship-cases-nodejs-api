@@ -1,4 +1,4 @@
-const TABLES = {
+export const TABLES = {
   EMPLOYEES: "X1101",
   EMPLOYEES_X_TEAMS: "X1103",
   TEAMS: "X1105",
@@ -6,13 +6,8 @@ const TABLES = {
   PROVIDERS_CONTACT: "X1104",
 };
 
-const FK = {
+export const FK = {
   EMPLOYEES_FK: "FK_X1101",
   TEAMS_FK: "FK_X1105",
   PROVIDERS_FK: "FK+X1102",
-};
-
-module.exports = {
-  TABLES,
-  FK,
 };

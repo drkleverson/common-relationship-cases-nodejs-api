@@ -1,6 +1,6 @@
-var express = require("express");
+import express from "express";
 
-const employeeController = require("../../controllers/employeeController");
+import * as employeeController from "../../controllers/employeeController";
 
 const employeesRouter = express.Router();
 
@@ -25,4 +25,4 @@ employeesRouter.put("/:id/teams", employeeController.putEmployeeTeamsById);
 //deleta funcionário pelo id
 employeesRouter.delete("/:id", employeeController.deleteEmployeeById);
 
-module.exports = employeesRouter;
+export default employeesRouter;
