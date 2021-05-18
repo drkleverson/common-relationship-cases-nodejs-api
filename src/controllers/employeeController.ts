@@ -1,11 +1,11 @@
 import * as employeeRepository from "../repository/employeeRepository";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
 //GET
 export const getEmployees = async (req: Request, res: Response) => {
   const result = await employeeRepository.getEmployees();
   res.send(result);
-}
+};
 
 export const getEmployeeById = async (req: Request, res: Response) => {
   const { params } = req;
@@ -15,7 +15,7 @@ export const getEmployeeById = async (req: Request, res: Response) => {
     return res.sendStatus(404);
   }
   return res.status(200).send(result);
-}
+};
 
 export const getEmployeeTeamsById = async (req: Request, res: Response) => {
   const { params } = req;
@@ -27,7 +27,7 @@ export const getEmployeeTeamsById = async (req: Request, res: Response) => {
     return res.sendStatus(404);
   }
   res.status(200).send(result);
-}
+};
 
 //POST
 export const postEmployee = async (req: Request, res: Response) => {
