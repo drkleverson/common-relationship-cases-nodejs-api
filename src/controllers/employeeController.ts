@@ -1,5 +1,6 @@
 import * as employeeRepository from "../repository/employeeRepository";
 import { Request, Response } from "express";
+import fs from "fs";
 
 //GET
 export const getEmployees = async (req: Request, res: Response) => {
@@ -64,4 +65,20 @@ export const deleteEmployeeById = async (req: Request, res: Response) => {
 
   const result = await employeeRepository.deleteEmployeeById(Number(params.id));
   res.sendStatus(result ? 200 : 404);
+};
+
+//PROCEDURE
+
+export const insertLead = async (req: Request, res: Response) => {
+  const { body } = req;
+
+  const result = await employeeRepository.insertLead(body);
+  res.status(result.status).send(result.data);
+};
+
+export const upload = async (req: Request, res: Response) => {
+  const { body } = req;
+  const file = { buffer: fs.readFileSync(req.file.path), path: req.file.path };
+  const result = await employeeRepository.upload(file, body);
+  res.status(result.status).send(result.data);
 };

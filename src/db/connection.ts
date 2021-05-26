@@ -7,6 +7,10 @@ const config = {
   server: String(process.env.DB_HOST),
   port: Number(process.env.DB_PORT),
   database: process.env.DB_DATABASE,
+  options: {
+    encrypt: true,
+    enableArithAbort: true,
+  },
 };
 
 const pool = new sql.ConnectionPool(config);
@@ -25,7 +29,8 @@ export async function rawQuery(rawSql: string) {
 }
 interface IField {
   field: string;
-  value: any;
+  type?: any;
+  value?: any;
 }
 
 interface IInsert {
@@ -44,6 +49,12 @@ interface IUpdate {
 interface IDelete {
   table: string;
   id: number;
+}
+
+interface IProcedure {
+  procedureName: string;
+  fields: IField[];
+  outputs: IField[];
 }
 
 export async function insert(insert: IInsert) {
@@ -107,5 +118,27 @@ export async function remove(remove: IDelete) {
     return result;
   } catch (e) {
     console.dir(e.message);
+  }
+}
+
+export async function runProcedure(procedure: IProcedure) {
+  const { procedureName, fields, outputs } = procedure;
+
+  const pool = await poolConnect;
+  const request = pool.request();
+
+  for (let index in fields) {
+    request.input(fields[index].field, fields[index].value);
+  }
+  for (let index in outputs) {
+    request.output(outputs[index].field, outputs[index].type);
+  }
+
+  try {
+    const result = await request.execute(procedureName);
+    return result;
+  } catch (e) {
+    console.dir(e.message);
+    throw e;
   }
 }
